@@ -3,6 +3,8 @@
  */
 package marl.ext.tilecoding;
 
+import java.io.IOException;
+
 import marl.agents.learning.LearningAlgorithm;
 import marl.agents.learning.qlearning.DiscreteQTable;
 import marl.agents.selection.Argmax;
@@ -33,19 +35,37 @@ public class TileCodeLearning<S extends TileCodingState<S>>
 	    alpha_      = cfg.getDouble("alpha");
 	    gamma_      = cfg.getDouble("gamma");
         nTilings_   = cfg.getInt("num_tilings");
-	    int nStates = cfg.getInt("num_states");;
+	    int nStates = cfg.getInt("num_states");
+	    String saveFileName = cfg.getString("policy_save_file");
 
         tileCoding_ = new TileCoding(cfg, env);
-	    if( nStates == -1 )
-	        qTable_ = new DiscreteQTable();
-	    else
-	        qTable_ = new DiscreteQTable(nStates);
-	    qTable_.reset();
+
+        try {
+            qTable_ = DiscreteQTable.load(saveFileName);
+            System.out.println(saveFileName + " loaded.");
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+            if(nStates == -1) {
+                qTable_ = new DiscreteQTable();
+            } else {
+                qTable_ = new DiscreteQTable(nStates);
+            }
+            qTable_.reset();
+        }
 
 	    eGreedy_ = new EGreedy(cfg);
 	}
-	
-	
+
+	public void save(Config cfg)
+	{
+	    try {
+	        qTable_.save(cfg.getString("policy_save_file"));
+
+	    } catch(IOException e) {
+	        e.printStackTrace();
+	    }
+	}
+
 	/* (non-Javadoc)
      * @see marl.agents.learning.LearningAlgorithm#select(marl.environments.State)
      */
