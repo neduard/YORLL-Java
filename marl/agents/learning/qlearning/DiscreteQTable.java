@@ -1,5 +1,11 @@
 package marl.agents.learning.qlearning;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import marl.environments.State;
@@ -31,7 +37,8 @@ import marl.environments.State;
  */
 public class DiscreteQTable
 {
-    private static final class QValues {
+    private static final class QValues implements Serializable {
+        private static final long serialVersionUID = -5132612005775360341L;
         double[] values;
         public QValues(int nActions, double initialValue) {
             values = new double[nActions];
@@ -97,8 +104,29 @@ public class DiscreteQTable
         hashTable_ = new HashMap<>(maxSize_);
         reset();
     }
-    
-    
+
+    public void load(String fileName) throws IOException, ClassNotFoundException {
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName));
+        Object obj = ois.readObject();
+        ois.close();
+        if (obj instanceof HashMap<?, ?>) {
+            hashTable_ = (HashMap<Integer, QValues>)obj;
+        } else {
+            throw new ClassNotFoundException();
+        }
+    }
+
+    public void save(String fileName) throws IOException {
+        FileOutputStream fos = new FileOutputStream(fileName);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(hashTable_);
+
+        oos.close();
+        fos.close();
+        System.out.println(fileName + " saved.");
+    }
+
+
     /**
      * Resets the Q-Table so that it is empty.
      */
