@@ -40,17 +40,20 @@ public class TileCodeLearning<S extends TileCodingState<S>>
 
         tileCoding_ = new TileCoding(cfg, env);
 
-        try {
-            qTable_ = DiscreteQTable.load(saveFileName);
-            System.out.println(saveFileName + " loaded.");
-        } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
-            if(nStates == -1) {
-                qTable_ = new DiscreteQTable();
-            } else {
-                qTable_ = new DiscreteQTable(nStates);
+        if(nStates == -1) {
+            qTable_ = new DiscreteQTable();
+        } else {
+            qTable_ = new DiscreteQTable(nStates);
+        }
+        qTable_.reset();
+
+        if (saveFileName != null) {
+            try {
+                qTable_.load(saveFileName);
+                System.out.println(saveFileName + " loaded.");
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
             }
-            qTable_.reset();
         }
 
 	    eGreedy_ = new EGreedy(cfg);

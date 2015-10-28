@@ -37,9 +37,6 @@ import marl.environments.State;
  */
 public class DiscreteQTable
 {
-    private static final long serialVersionUID = 1976009677568533792L;
-
-
     private static final class QValues implements Serializable {
         private static final long serialVersionUID = -5132612005775360341L;
         double[] values;
@@ -108,17 +105,21 @@ public class DiscreteQTable
         reset();
     }
 
-    static public DiscreteQTable load(String fileName) throws IOException, ClassNotFoundException {
+    public void load(String fileName) throws IOException, ClassNotFoundException {
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName));
         Object obj = ois.readObject();
         ois.close();
-        return (DiscreteQTable)obj;
+        if (obj instanceof HashMap<?, ?>) {
+            hashTable_ = (HashMap<Integer, QValues>)obj;
+        } else {
+            throw new ClassNotFoundException();
+        }
     }
 
     public void save(String fileName) throws IOException {
         FileOutputStream fos = new FileOutputStream(fileName);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(this);
+        oos.writeObject(hashTable_);
 
         oos.close();
         fos.close();
