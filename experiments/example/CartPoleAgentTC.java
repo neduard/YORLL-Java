@@ -6,7 +6,6 @@ package experiments.example;
 import marl.agents.Agent;
 import marl.environments.CartPole.CartPoleEnvironment;
 import marl.environments.CartPole.CartPoleState;
-import marl.ext.adaptivetilecoding.AdaptiveTileCodeLearning;
 import marl.ext.tilecoding.ModelTileCodeLearning;
 import marl.utility.Config;
 

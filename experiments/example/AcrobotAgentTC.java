@@ -6,8 +6,6 @@ package experiments.example;
 import marl.agents.Agent;
 import marl.environments.Acrobot.AcrobotEnvironment;
 import marl.environments.Acrobot.AcrobotState;
-import marl.ext.adaptivetilecoding.AdaptiveTileCodeLearning;
-import marl.ext.adaptivetilecoding.AdaptiveTileCodeLearning;
 import marl.ext.tilecoding.ModelTileCodeLearning;
 import marl.utility.Config;
 
