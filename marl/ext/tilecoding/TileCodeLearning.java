@@ -5,6 +5,8 @@ package marl.ext.tilecoding;
 
 import java.io.IOException;
 
+import javax.management.RuntimeErrorException;
+
 import marl.agents.learning.LearningAlgorithm;
 import marl.agents.learning.qlearning.DiscreteQTable;
 import marl.agents.selection.Argmax;
@@ -50,7 +52,6 @@ public class TileCodeLearning<S extends TileCodingState<S>>
         if (saveFileName != null) {
             try {
                 qTable_.load(saveFileName);
-                System.out.println(saveFileName + " loaded.");
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
@@ -63,9 +64,9 @@ public class TileCodeLearning<S extends TileCodingState<S>>
 	{
 	    try {
 	        qTable_.save(cfg.getString("policy_save_file"));
-
 	    } catch(IOException e) {
 	        e.printStackTrace();
+	        throw new RuntimeException(e);
 	    }
 	}
 

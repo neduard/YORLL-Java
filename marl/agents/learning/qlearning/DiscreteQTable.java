@@ -123,7 +123,6 @@ public class DiscreteQTable
 
         oos.close();
         fos.close();
-        System.out.println(fileName + " saved.");
     }
 
 
