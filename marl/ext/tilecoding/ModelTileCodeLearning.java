@@ -101,7 +101,7 @@ public class ModelTileCodeLearning<S extends TileCodingState<S>> extends
     @Override
     public void update(S curState, S newState, int action, double reward)
     {
-        if( evaluationMode_ ) {
+        if( !evaluationMode_ ) {
             double target = reward,
                    weight;
             
