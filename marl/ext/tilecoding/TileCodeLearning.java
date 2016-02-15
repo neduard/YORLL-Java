@@ -38,7 +38,6 @@ public class TileCodeLearning<S extends TileCodingState<S>>
 	    gamma_      = cfg.getDouble("gamma");
         nTilings_   = cfg.getInt("num_tilings");
 	    int nStates = cfg.getInt("num_states");
-	    String saveFileName = cfg.getString("policy_save_file");
 
         tileCoding_ = new TileCoding(cfg, env);
 
@@ -49,6 +48,7 @@ public class TileCodeLearning<S extends TileCodingState<S>>
         }
         qTable_.reset();
 
+        String saveFileName = cfg.getString("policy_load_file");
         if (saveFileName != null) {
             try {
                 qTable_.load(saveFileName);
@@ -60,10 +60,10 @@ public class TileCodeLearning<S extends TileCodingState<S>>
 	    eGreedy_ = new EGreedy(cfg);
 	}
 
-	public void save(Config cfg)
+	public void save(String file)
 	{
 	    try {
-	        qTable_.save(cfg.getString("policy_save_file"));
+	        qTable_.save(file);
 	    } catch(IOException e) {
 	        e.printStackTrace();
 	        throw new RuntimeException(e);
