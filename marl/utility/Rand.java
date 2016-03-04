@@ -36,6 +36,11 @@ public enum Rand {
         return min + (random.nextDouble() * (max - min));
     }
 
+    public long nextLong()
+    {
+        return random.nextLong();
+    }
+
     public double nextGaussian()
     {
         return random.nextGaussian();
