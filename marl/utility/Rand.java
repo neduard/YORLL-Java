@@ -11,37 +11,37 @@ import java.util.Random;
  * @version 06/09/2012
  */
 public enum Rand {
-	INSTANCE;
-	
-	
-	private Random random = new Random();
-	public void setSeed(long seed)
-	{
-		random.setSeed(seed);
-	}
-	public int nextInt()
-	{
-		return random.nextInt();
-	}
-	public int nextInt(int max)
-	{
-		return random.nextInt(max);
-	}
-	public double nextDouble()
-	{
-		return random.nextDouble();
-	}
-	public double nextDouble(double min, double max)
-	{
-		return min + (random.nextDouble() * (max - min));
-	}
-	
-	public double nextGaussian()
-	{
-	    return random.nextGaussian();
-	}
-    
-    
+    INSTANCE;
+
+
+    private Random random = new Random();
+    public void setSeed(long seed)
+    {
+        random.setSeed(seed);
+    }
+    public int nextInt()
+    {
+        return random.nextInt();
+    }
+    public int nextInt(int max)
+    {
+        return random.nextInt(max);
+    }
+    public double nextDouble()
+    {
+        return random.nextDouble();
+    }
+    public double nextDouble(double min, double max)
+    {
+        return min + (random.nextDouble() * (max - min));
+    }
+
+    public double nextGaussian()
+    {
+        return random.nextGaussian();
+    }
+
+
     /**
      * Select a random index, using the given probability vector
      * @param probabilities e.g. [0.2, 0.3, 0.5]. 
@@ -61,7 +61,7 @@ public enum Rand {
         }
         throw new IllegalArgumentException("Couldn't find a random index - probably the probabilities don't sum to "+sumOfProbabilities+"!"+Arrays.toString(probabilities));
     }
-    
+
     /**
      * Select a random index, using the given probability vector
      * @param probabilities e.g. [0.2, 0.3, 0.5]. The sum must be 1. 
