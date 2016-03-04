@@ -5,113 +5,113 @@ import marl.utility.Rand;
 
 /**
  * Taken from: http://webdocs.cs.ualberta.ca/~sutton/tiles2.html, 23/03/2012
- * 
+ *
  * External documentation and recommendations on the use of this code is
  * available at http://rlai.net.
  *
- * This is an implementation of grid-style tile codings, based originally on 
+ * This is an implementation of grid-style tile codings, based originally on
  * the UNH CMAC code (see http://www.ece.unh.edu/robots/cmac.htm).
  * Here we provide a procedure, "GetTiles", that maps floating-point and integer
  * variables to a list of tiles. This function is memoryless and requires no
  * setup. We assume that hashing collisions are to be ignored. There may be
  * duplicates in the list of tiles, but this is unlikely if memory-size is
  * large.
- * 
+ *
  * The floating-point input variables will be gridded at unit intervals, so
  * generalization will be by 1 in each direction, and any scaling will have
  * to be done externally before calling tiles.  There is no generalization
  * across integer values.
- * 
+ *
  * It is recommended by the UNH folks that num-tilings be a power of 2, e.g., 16.
- * 
+ *
  * We assume the existence of a function "rand()" that produces successive
  * random integers, of which we use only the low-order bytes.
  */
 public class TileCoding
 {
-	public static final int MAX_NUM_VARS   = 20,
-							MAX_NUM_COORDS = 100,
-							MaxLONGINT     = 2147483647;
-	
-	private int 	 nTiles_,
-					 nFeatures_,
-					 nTilings_,
-					 memorySize_;
-	private double[] minimumValues_,
-					 tileSpacings_;
-	
-	
-	public TileCoding(Config cfg, TileCodingEnvironment<?, ?> env)
-	{
-	    //
-	    nTiles_        = cfg.getInt("num_tiles");
-	    nFeatures_     = env.getNumFeatures();
-	    nTilings_      = cfg.getInt("num_tilings");
-	    memorySize_    = (int)Math.pow(nTiles_, nFeatures_) * nTilings_;
+    public static final int MAX_NUM_VARS   = 20,
+                            MAX_NUM_COORDS = 100,
+                            MaxLONGINT     = 2147483647;
+
+    private int      nTiles_,
+                     nFeatures_,
+                     nTilings_,
+                     memorySize_;
+    private double[] minimumValues_,
+                     tileSpacings_;
+
+
+    public TileCoding(Config cfg, TileCodingEnvironment<?, ?> env)
+    {
+        //
+        nTiles_        = cfg.getInt("num_tiles");
+        nFeatures_     = env.getNumFeatures();
+        nTilings_      = cfg.getInt("num_tilings");
+        memorySize_    = (int)Math.pow(nTiles_, nFeatures_) * nTilings_;
 
         minimumValues_ = new double[nFeatures_];
-	    tileSpacings_  = new double[nFeatures_];
-	    for( int i=0; i<nFeatures_; i++ ) {
+        tileSpacings_  = new double[nFeatures_];
+        for( int i=0; i<nFeatures_; i++ ) {
                    minimumValues_[i] = env.getMinimumValue(i);
-	        double range             = env.getMaximumValue(i) - minimumValues_[i];
-	        tileSpacings_[i] = range / (double)nTiles_;
-	    }
-	}
+            double range             = env.getMaximumValue(i) - minimumValues_[i];
+            tileSpacings_[i] = range / (double)nTiles_;
+        }
+    }
 
     /**
      * @return The number of tiles being learnt about
      */
-	public int getNoTiles() {
-	    return (int)(Math.pow(nTiles_, nFeatures_)) * nTilings_;
-	}
-	
-	
-	public void getTiles(Tile[] tiles, TileCodingState<?> state)
-	{
-	    // collect up the features into an array
-	    int[]    hashes = new int[nTilings_];
-	    double[] doubles = prepareFeatures(state);
+    public int getNoTiles() {
+        return (int)(Math.pow(nTiles_, nFeatures_)) * nTilings_;
+    }
 
-	    // get the tile hashes
-	    GetTiles(hashes, nTilings_, memorySize_, doubles, nFeatures_);
 
-	    // create the tiles
-	    for( int i=0; i<nTilings_; i++ )
-	        tiles[i] = new Tile(hashes[i]);
-	}
-	public void getTiles(int[] tiles, TileCodingState<?> state)
-	{
-	    // collect up the features into an array
-	    double[] doubles = prepareFeatures(state);
+    public void getTiles(Tile[] tiles, TileCodingState<?> state)
+    {
+        // collect up the features into an array
+        int[]    hashes = new int[nTilings_];
+        double[] doubles = prepareFeatures(state);
 
-	    // get the tile hashes
-	    GetTiles(tiles, nTilings_, memorySize_, doubles, nFeatures_);
-	}
-	protected double[] prepareFeatures(TileCodingState<?> state)
-	{
-	    double[] doubles = new double[nFeatures_];
-	    for( int i=0; i<nFeatures_; i++ )
-	        // ( (value - min) / (max - min) ) * ( (max - min) / spacing)
-	        // === (value - min) / spacing
-	        doubles[i] = (state.getFeature(i) - minimumValues_[i]) / tileSpacings_[i];
+        // get the tile hashes
+        GetTiles(hashes, nTilings_, memorySize_, doubles, nFeatures_);
 
-	    return doubles;
-	}
-	
-	
-	
-	
+        // create the tiles
+        for( int i=0; i<nTilings_; i++ )
+            tiles[i] = new Tile(hashes[i]);
+    }
+    public void getTiles(int[] tiles, TileCodingState<?> state)
+    {
+        // collect up the features into an array
+        double[] doubles = prepareFeatures(state);
+
+        // get the tile hashes
+        GetTiles(tiles, nTilings_, memorySize_, doubles, nFeatures_);
+    }
+    protected double[] prepareFeatures(TileCodingState<?> state)
+    {
+        double[] doubles = new double[nFeatures_];
+        for( int i=0; i<nFeatures_; i++ )
+            // ( (value - min) / (max - min) ) * ( (max - min) / spacing)
+            // === (value - min) / spacing
+            doubles[i] = (state.getFeature(i) - minimumValues_[i]) / tileSpacings_[i];
+
+        return doubles;
+    }
+
+
+
+
 
 
     private int mod(int n, int k) {return (n >= 0) ? n%k : k-1-((-n-1)%k);}
-    
+
     /**
-     * @param int tiles[]       provided array contains returned tiles (tile indices) 
+     * @param int tiles[]       provided array contains returned tiles (tile indices)
      * @param int num_tilings   number of tile indices to be returned
      * @param int memory_size   total number of possible tiles
      * @param double doubles[]    array of doubling point variables
      * @param int num_doubles    number of doubling point variables
-     * @param int ints[]        array of integer variables 
+     * @param int ints[]        array of integer variables
      * @param int num_ints      number of integer variables
      */
     private void GetTiles(
@@ -165,7 +165,7 @@ public class TileCoding
 
     /**
      *  hash_UNH
-     *  Takes an array of integers and returns the corresponding tile after hashing 
+     *  Takes an array of integers and returns the corresponding tile after hashing
      */
     static long[]  rndseq     = new long[2048];
     static boolean first_call =  true;
@@ -205,7 +205,7 @@ public class TileCoding
 
         return (int)index;
     }
-    
+
     private static int[]   i_tmp_arr = new int[MAX_NUM_VARS];
 //    private static double[] f_tmp_arr = new double[MAX_NUM_VARS];
     // no ints
@@ -314,13 +314,13 @@ public class TileCoding
 
 
     void GetTilesWrap(
-	    int tiles[],               // provided array contains returned tiles (tile indices)
-	    int num_tilings,           // number of tile indices to be returned in tiles       
+        int tiles[],               // provided array contains returned tiles (tile indices)
+        int num_tilings,           // number of tile indices to be returned in tiles
         int memory_size,           // total number of possible tiles
-	    double doubles[],            // array of doubleing point variables
-        int num_doubles,            // number of doubleing point variables
+        double doubles[],          // array of doubleing point variables
+        int num_doubles,           // number of doubleing point variables
         int wrap_widths[],         // array of widths (length and units as in doubles)
-        int ints[],				   // array of integer variables
+        int ints[],                // array of integer variables
         int num_ints)              // number of integer variables
     {
         int i,j;
@@ -365,7 +365,7 @@ public class TileCoding
     }
 
     // no ints
-    void GetTilesWrap(int tiles[],int num_tilings,int memory_size,double doubles[],       
+    void GetTilesWrap(int tiles[],int num_tilings,int memory_size,double doubles[],
         int num_doubles,int wrap_widths[])
     {
         GetTilesWrap(tiles,num_tilings,memory_size,doubles,
