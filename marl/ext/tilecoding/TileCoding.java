@@ -37,8 +37,7 @@ public class TileCoding
     private int      nTiles_,
                      nFeatures_,
                      nTilings_,
-                     memorySize_,
-                     rndSeqSeed_;
+                     memorySize_;
     private double[] minimumValues_,
                      tileSpacings_;
 
@@ -50,7 +49,6 @@ public class TileCoding
         nFeatures_     = env.getNumFeatures();
         nTilings_      = cfg.getInt("num_tilings");
         memorySize_    = (int)Math.pow(nTiles_, nFeatures_) * nTilings_;
-        rndSeqSeed_    = cfg.getInt("rndseqseed");
 
         minimumValues_ = new double[nFeatures_];
         tileSpacings_  = new double[nFeatures_];
@@ -182,7 +180,7 @@ public class TileCoding
         if (first_call)
         {
             Random rnd = new Random();
-            rnd.setSeed(rndSeqSeed_);
+            rnd.setSeed(0);
             for (k = 0; k < 2048; k++)
             {
                 rndseq[k] = 0;
