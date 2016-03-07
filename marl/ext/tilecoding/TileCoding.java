@@ -1,7 +1,8 @@
 package marl.ext.tilecoding;
 
+import java.util.Random;
+
 import marl.utility.Config;
-import marl.utility.Rand;
 
 /**
  * Taken from: http://webdocs.cs.ualberta.ca/~sutton/tiles2.html, 23/03/2012
@@ -36,7 +37,8 @@ public class TileCoding
     private int      nTiles_,
                      nFeatures_,
                      nTilings_,
-                     memorySize_;
+                     memorySize_,
+                     rndSeqSeed_;
     private double[] minimumValues_,
                      tileSpacings_;
 
@@ -48,6 +50,7 @@ public class TileCoding
         nFeatures_     = env.getNumFeatures();
         nTilings_      = cfg.getInt("num_tilings");
         memorySize_    = (int)Math.pow(nTiles_, nFeatures_) * nTilings_;
+        rndSeqSeed_    = cfg.getInt("rndseqseed");
 
         minimumValues_ = new double[nFeatures_];
         tileSpacings_  = new double[nFeatures_];
@@ -178,11 +181,13 @@ public class TileCoding
         /* if first call to hashing, initialize table of random numbers */
         if (first_call)
         {
+            Random rnd = new Random();
+            rnd.setSeed(rndSeqSeed_);
             for (k = 0; k < 2048; k++)
             {
                 rndseq[k] = 0;
                 for (i=0; i < /*(int)sizeof(int)*/rndseq.length; ++i)
-                    rndseq[k] = (rndseq[k] << 8) | ((int)(/*Math.random()*/Rand.INSTANCE.nextDouble()*Integer.MAX_VALUE) & 0xff);
+                    rndseq[k] = (rndseq[k] << 8) | ((int)(rnd.nextDouble()*Integer.MAX_VALUE) & 0xff);
             }
             first_call = false;
         }
