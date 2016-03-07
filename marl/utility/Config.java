@@ -36,9 +36,9 @@ public class Config extends FileReader
     /**
      * Mapping to hold the variable names and their value.
      */
-    private Map<String, String> lookup;
-    
-    
+    public Map<String, String> lookup;
+
+
     public Config()
     {
         lookup = new HashMap<String, String>();
